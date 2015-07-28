@@ -1,0 +1,22 @@
+@main("Schedule Page"){
+	<script type='text/javascript' src='@routes.Assets.at("js/util.js")'></script>
+	<a href="@routes.Application.index()">Menu</a>
+	<h2>Schedule Page</h2>
+	<select id="area_select" onselect="fillScheduleForArea(this.value)"></select>
+
+	<script>
+		document.getElementById('area_select').innerHTML = httpGet('@routes.Application.getAreas()');
+	</script>
+
+	<script>
+		function fillScheduleForArea(AreaName){
+			var schedule = document.getElementById('schedule');
+			schedule.innerHTML = httpGet('/getSchedule/From/' + AreaName);
+			schedule.style.display = "block";
+
+		}
+	</script>
+
+	<div id="schedule" style="display: none"></div>
+
+}

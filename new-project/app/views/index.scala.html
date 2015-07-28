@@ -1,0 +1,18 @@
+@(message: String)
+
+@main(message) {
+
+    <p>Main Menu</p>
+    <ul>
+    	<li>
+    		<a href="@routes.Application.employeePage()">Employee Page</a>
+    	</li>
+    	<li>
+    		<a href="@routes.Application.schedulePage()">Schedule Page</a>
+    	</li>
+    	<li>
+    		<a href="@routes.Application.qualificationsPage()">Qualifications Page</a>
+    	</li>
+    </ul>
+
+}
