@@ -1,7 +1,6 @@
 package controllers;
 
 import play.*;
-<<<<<<< HEAD
 import play.db.DB;
 import play.mvc.*;
 
@@ -16,16 +15,6 @@ import java.sql.Statement;
 public class Application extends Controller {
 
     public static Result index() {
-=======
-import play.mvc.*;
-
-import views.html.*;
-
-public class Application extends Controller {
-
-    public static Result index() {
-<<<<<<< HEAD
->>>>>>> e77c4fd4311470428cf4f5f54fe3343109f12bfe
         return ok(index.render("Scheduling"));
     }
 
@@ -40,7 +29,6 @@ public class Application extends Controller {
     public static Result qualificationsPage(){
     	return ok(qualifications.render());
     }
-<<<<<<< HEAD
 
     public static Result getAreas(){
     	String sqlString = "SELECT Name FROM tblArea;";
@@ -69,11 +57,4 @@ public class Application extends Controller {
         return ok();
     }
     
-=======
-=======
-        return ok(index.render("Your new application is ready."));
-    }
-
->>>>>>> 13e5837b1b90dfdff3e6498307e3c1fd4305c561
->>>>>>> e77c4fd4311470428cf4f5f54fe3343109f12bfe
 }
