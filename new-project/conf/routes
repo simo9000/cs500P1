@@ -5,26 +5,15 @@
 # Home page
 GET     /                           controllers.Application.index()
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> e77c4fd4311470428cf4f5f54fe3343109f12bfe
-GET 	/employee					controllers.Application.employeePage()
+GET 	/employee	            controllers.Application.employeePage()
 
-GET		/schedule 					controllers.Application.schedulePage()
+GET	/schedule 		    controllers.Application.schedulePage()
 
-GET		/qualifications				controllers.Application.qualificationsPage()
+GET	/qualifications	            controllers.Application.qualificationsPage()
 
-<<<<<<< HEAD
-GET		/areas						controllers.Application.getAreas()
+GET	/areas			    controllers.Application.getAreas()
 
-GET 	/getSchedule/From/:area 	controllers.Application.getAreaSchedule(area: String)
+GET 	/getSchedule/From/:area     controllers.Application.getAreaSchedule(area: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
-=======
-=======
->>>>>>> 13e5837b1b90dfdff3e6498307e3c1fd4305c561
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
->>>>>>> e77c4fd4311470428cf4f5f54fe3343109f12bfe
