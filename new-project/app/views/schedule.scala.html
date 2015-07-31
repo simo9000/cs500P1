@@ -5,8 +5,15 @@
 			var scheduleSelect = document.getElementById('area_select');
 			var schedule = document.getElementById('schedule');
 			schedule.innerHTML = httpGet('/getSchedule/From/' + scheduleSelect.value);
-			schedule.style.display = "block";
-
+			var scheduleArea = document.getElementById('scheduleArea');
+			scheduleArea.style.display = "block";
+		}
+		function scheduleNewShift(){
+			var scheduleSelect = document.getElementById('area_select');
+			httpPost('/scheduleNext/For/' + scheduleSelect.value,
+				function(){
+					fillScheduleForArea();
+				});
 		}
 	</script>
 	
@@ -19,6 +26,11 @@
 	</script>
 
 
-	<div id="schedule" style="display: none"></div>
+	<div id="scheduleArea" style="display: none">
+		<div id="schedule"></div>
+		<form action="scheduleNewShift()">
+			<button>Add New</button>
+		</form>
+	</div>
 
 }
