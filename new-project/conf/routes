@@ -17,5 +17,7 @@ GET		/areas			    		controllers.Application.getAreas()
 #Schedule Page
 GET 	/getSchedule/From/:area     controllers.ScheduleController.getAreaSchedule(area: String)
 
+POST	/scheduleNext/For/:area 	controllers.ScheduleController.addNextShift(area: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
