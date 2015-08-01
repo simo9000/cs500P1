@@ -4,6 +4,7 @@ import play.*;
 import play.db.DB;
 import play.mvc.*;
 
+
 import utils.DBUtils;
 import views.html.*;
 
@@ -11,21 +12,21 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class ScheduleController extends Controller {
 
-    private Connection conn;
-
     public static Result getAreaSchedule(String area){
-    	String sqlString = "SELECT tblShift.date_ as date \n" +
-    			   "FROM tblShift \n" +
-    			   "	INNER JOIN tblscheduledToWork \n" +
-    			   "		ON tblShift.date_ = tblscheduledToWork.shiftDate \n" +
-			       "WHERE tblscheduledToWork.areaName='" + area + "';";
-	
-	    Connection conn = DB.getConnection();
+    	String sqlString = "SELECT DISTINCT shiftDate as date \n" +
+    			   "FROM tblscheduledToWork \n" +
+    			   "WHERE tblscheduledToWork.areaName='" + area + "'" +
+			   "ORDER BY shiftDate;";
+
+	Connection conn = DB.getConnection();
     	String returnVal = "<table border=\"1\"> \r" +
     		               "\t<tr>\r" +
     	 				   "\t\t<th>Date</th>\r" +
@@ -46,81 +47,77 @@ public class ScheduleController extends Controller {
     	}
     	catch (SQLException e)
     	{
-    		return ok(e.getMessage() + "\r" + e.getStackTrace());
+		printError(e);
     	}
 
         return ok(returnVal);
     }
 
     public static Result addNextShift(String area){
-        
-        conn = DB.getConnection();
+       
+	String newDate = "";
 
-        String newDate = getNextDate(area);
+	try { 
+	        newDate = getNewDate(area);
+		scheduleNewShift(newDate);
+		scheduleAssignedEmployees(newDate, area);
 
-        scheduleNewShift(newDate);
-        
-        scheduleAssignedEmployees(newDate, area);
+		Connection conn = DB.getConnection();
+		conn.close();
+	}	
+	catch (SQLException e){
+		printError(e);
+	}
 
         return ok();
     }
 
-    private String getNewDate(String area){
+    private static String getNewDate(String area) throws SQLException {
         String sqlString = "SELECT Max(tblShift.date_) \n" +
                            "FROM tblShift \n" +
                            "    INNER JOIN tblscheduledToWork \n" +
                            "        ON tblShift.date_ = tblscheduledToWork.shiftDate \n" +
                            "WHERE tblscheduledToWork.areaName='" + area + "';";
-
-        Connection conn = DB.getConnection();
+        
+	Connection conn = DB.getConnection();
         String lastDate = "";
-        List<String> acceptableDays = new List<String>();
-        try {
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(sqlString);
-            if (rs.first())
-                lastDate = rs.getString(1);
-            else
-                lastDate = "08312015";
-            rs.close();
-            st.close();
-            acceptableDays = availableWorkDays(area);
-        }
-        catch (SQLException e)
-        {
-            return internalServerError(e.getMessage());
-        }
-
-        string newDate = getNextDate(lastDate);
+        List<String> acceptableDays = new ArrayList<String>();
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(sqlString);
+        rs.next();
+        lastDate = rs.getString(1);
+        if (lastDate == null) lastDate = "08/31/2015";
+        rs.close();
+        st.close();
+        acceptableDays = availableWorkDays(area);
+        String newDate = getNextDate(lastDate);
         while(!isDateValid(newDate, acceptableDays)) newDate = getNextDate(newDate);
 
         return newDate;
     }
 
-    private void scheduleNewShift(String date){
+    private static void scheduleNewShift(String date) throws SQLException {
 
-        String sqlString = "SELECT * FROM tblShift WHERE date_='" + date + "';";
+            Connection conn = DB.getConnection();
+	    
+	    String sqlString = "SELECT * FROM tblShift WHERE date_='" + date + "';";
 
-        try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sqlString);
-            if (!rs.first())
+            if (!rs.next())
             {
-                sqlString = "INSERT INTO tblShift(date_, isHoliday) VALUES ('" + newDate + "',false);";
+                sqlString = "INSERT INTO tblShift(date_, isHoliday) VALUES ('" + date + "',false);";
                 st.execute(sqlString);
             }
-        }
-        catch (SQLException e)
-        {
-            return internalServerError(e.getMessage());
-        }
     }
 
-    private void scheduleAssignedEmployees(String date, String area){
+    private static void scheduleAssignedEmployees(String date, String area) throws SQLException {
+
+    	Connection conn = DB.getConnection();
+
         String sqlString = "SELECT EID FROM tblResourceAssignedTo WHERE areaName='" + area + "';";
 
-        List<int> ids = new List<int>();
-        try {
+        List<Integer> ids = new ArrayList<Integer>();
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sqlString);
             while(rs.next())
@@ -130,19 +127,17 @@ public class ScheduleController extends Controller {
 
             for(int i =0; i < ids.size(); i++)
             {
-                sqlString = "INSERT INTO tblScheduledToWork(EID, shiftDate, areaName) VALUES (" + ids[i] + ",'" + date + "','" + area + "')";
+                sqlString = "INSERT INTO tblScheduledToWork(EID, shiftDate, areaName) VALUES (" + ids.get(i) + ",'" + date + "','" + area + "')";
                 st.execute(sqlString);
             }
             st.close();
-        }
-        catch (SQLException e)
-        {
-            return internalServerError(e.getMessage());
-        }
     }
 
     private static String getScheduledEmployees(String shiftDate, String area){
-    	String sqlString = "SELECT tblEmployee.Name \r" +
+
+    	Connection conn = DB.getConnection();
+
+	String sqlString = "SELECT tblEmployee.Name \r" +
     					   "FROM tblEmployee \r" +
     					   "	INNER JOIN tblscheduledToWork \r" +
     					   "		ON tblEmployee.EID = tblscheduledToWork.EID \r" +
@@ -163,7 +158,7 @@ public class ScheduleController extends Controller {
     	}
     	catch (SQLException e)
     	{
-    		return e.getMessage();
+		printError(e);
     	}
 
     	returnVal += "</ul>\r";
@@ -171,18 +166,20 @@ public class ScheduleController extends Controller {
     }
 
     private static String getNextDate(String date){
-        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
         Calendar c = Calendar.getInstance();
-        c.setTime(sdf.parse(date));
-        c.add(Calendar.Date,1);
+        try {
+		c.setTime(sdf.parse(date));
+	}
+	catch (ParseException e) { }
+        c.add(Calendar.DATE,1);
         return sdf.format(c.getTime());
     }
 
     private static List<String> availableWorkDays(String area) throws SQLException{
-        String sqlString = "SELECT dayName FROM tblAreaOperatesOn WHERE dayName='" + area + "'";
-
+        String sqlString = "SELECT dayName FROM tblAreaOperatesOn WHERE areaName='" + area + "'";
         Connection conn = DB.getConnection();
-        List<String> returnVal = new List<String>();
+        List<String> returnVal = new ArrayList<String>();
         Statement st = conn.createStatement();
         ResultSet rs = st.executeQuery(sqlString);
         while (rs.next()){
@@ -191,12 +188,24 @@ public class ScheduleController extends Controller {
         return returnVal;
     }
 
-    private boolean isDateValid(String date, List<String> validDays){
-        SimpleDateFormat sdf_date = new SimpleDateFormat("ddMMyyyy");
+    private static boolean isDateValid(String date, List<String> validDays){
+        SimpleDateFormat sdf_date = new SimpleDateFormat("MM/dd/yyyy");
         Calendar c = Calendar.getInstance();
-        c.setTime(sdf.parse(date));
+        try {
+		c.setTime(sdf_date.parse(date));
+	}
+	catch (ParseException e) { }
         SimpleDateFormat sdf_DOW = new SimpleDateFormat("EEE");
         String DOW = sdf_DOW.format(c.getTime()).toUpperCase();
         return validDays.contains(DOW);
     }
+
+    private static void printError(SQLException e)
+    {
+	Logger.error(e.getMessage());
+	StackTraceElement lines[] = e.getStackTrace();
+	for(int i =0; i<lines.length; i++)
+		Logger.error(lines[i].toString());
+    }
+
 }

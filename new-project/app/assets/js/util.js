@@ -13,16 +13,14 @@ function httpPost(url, onSuccess)
 {
 	var xmlHttp = null;
 
-	xmlHttp = new XMLHttpRequest()
+	xmlHttp = new XMLHttpRequest();
 	xmlHttp.open("POST", url, false);
 	xmlHttp.onreadystatechange=function()
 	{
 		if (xmlHttp.readyState == 4)
 			if (xmlHttp.status == 200)
-				onSuccess;
-			else
-				document.write(xmlHttp.responseText);
-	}
+				onSuccess();
+	};
 	xmlHttp.send( null );
 	return xmlHttp.responseText;
 }
