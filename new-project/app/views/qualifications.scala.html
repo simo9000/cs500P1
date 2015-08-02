@@ -1,4 +1,22 @@
 @main("Qualifications Page"){
 	<a href="@routes.Application.index()">Menu</a>
 	<h2>Qualifications Page</h2>
+
+  <script type='text/javascript' src='@routes.Assets.at("js/util.js")'></script>
+
+  <div>Filter by Qualification: <div id="qualification_dropdown" style="display: inline" onchange="submitQualificationQuery()"></div>
+
+  <br><br><br>
+ 
+
+  <div>Qualification</div>
+  <hr>
+  <div id="qualification_report"></div>
+
+
+	  <script>
+		document.getElementById('qualification_dropdown').innerHTML = httpGet('/qualifications/getAllQualifications');
+	</script>
+
+
 }

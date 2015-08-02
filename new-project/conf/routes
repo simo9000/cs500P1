@@ -14,6 +14,10 @@ GET		/qualifications	    		controllers.Application.qualificationsPage()
 GET		/areas			    		controllers.Application.getAreas()
 
 
+
+
+
+
 #Schedule Page
 GET 	/getSchedule/From/:area     controllers.ScheduleController.getAreaSchedule(area: String)
 
@@ -21,3 +25,24 @@ POST	/scheduleNext/For/:area 	controllers.ScheduleController.addNextShift(area: 
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+# views on main page
+
+POST    /employee                    					 controllers.Application.addEmployee()
+
+GET     /employeesTable              					 controllers.Application.employeeTable()
+
+POST    /achievement                 					 controllers.Application.addAchievement()
+
+GET     /achievementTable                                controllers.Application.achievementTable()
+
+#Employee Page
+
+GET     /employee/getAllEmployees             					controllers.EmployeeController.getAllEmployees()
+GET     /employee/getScheduleByEmployee/:eid_str       		    controllers.EmployeeController.getScheduleByEmployee(eid_str: String)
+GET     /employee/getQualificationByEmployee/:eid_str       	controllers.EmployeeController.getQualificationByEmployee(eid_str: String)
+
+#Qualification Page
+GET     /qualifications/getAllQualifications              				controllers.QualificationsController.getAllQualifications()
+GET     /qualifications/getQualificationReport/:qualification       	controllers.QualificationsController.getQualificationReport(qualification: String)
+

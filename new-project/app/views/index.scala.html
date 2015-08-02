@@ -2,6 +2,10 @@
 
 @main(message) {
 
+
+    <script type='text/javascript' src='@routes.Assets.at("js/util.js")'></script>
+
+
     <p>Main Menu</p>
     <ul>
     	<li>
@@ -14,5 +18,60 @@
     		<a href="@routes.Application.qualificationsPage()">Qualifications Page</a>
     	</li>
     </ul>
+
+
+
+    <table>
+        <tr>
+            <form action="@routes.Application.addEmployee()" method="post">
+            <td>Name</td>
+            <td><input type="text" name="name" /></td>
+        </tr>
+        <tr>
+            <td>DOB</td>
+            <td><input type="text" name="dob" /></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><button>Add Employee</button></td>
+            </form>
+        </tr>
+    </table>
+    
+    <div id="employees"></div>
+
+    <script>
+        document.getElementById('employees').innerHTML = httpGet('/employeesTable');
+    </script>
+
+    </br></br><hr></br></br>
+
+    
+        <table>
+        <tr>
+            <form action="@routes.Application.addAchievement()" method="post">
+            <td>Name</td>
+            <td><input type="text" name="name" /></td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td><input type="text" name="description" /></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><button>Add Achievements</button></td>
+            </form>
+        </tr>
+    </table>
+    
+    <div id="achievements"></div>
+
+    <script>
+        document.getElementById('achievements').innerHTML = httpGet('/achievementTable');
+    </script>
+
+    </br></br><hr></br></br>
+
+
 
 }

@@ -1,4 +1,29 @@
 @main("Employee Page"){
 	<a href="@routes.Application.index()">Menu</a>
 	<h2>Employee Page</h2>
+
+
+    <script type='text/javascript' src='@routes.Assets.at("js/util.js")'></script>
+
+  <div>Employee name: <div id="employee_dropdown" style="display: inline"  onchange="submitEmployeeQuery()"></div></div>
+
+  <br><br><br>
+ 
+
+  <div>Employee Schedule</div>
+  <hr>
+  <div id="schedule_by_employee"></div>
+
+  <br><br><br>
+ 
+
+  <div>Employee Qualification</div>
+  <hr>
+  <div id="qualification_by_employee"></div>
+ 
+
+	  <script>
+		document.getElementById('employee_dropdown').innerHTML = httpGet('/employee/getAllEmployees');
+	</script>
+
 }
