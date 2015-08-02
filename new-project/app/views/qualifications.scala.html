@@ -4,19 +4,15 @@
 
   <script type='text/javascript' src='@routes.Assets.at("js/util.js")'></script>
 
-  <div>Filter by Qualification: <div id="qualification_dropdown" style="display: inline" onchange="submitQualificationQuery()"></div>
+  <div>Qualification Report</dib> 
 
   <br><br><br>
  
-
-  <div>Qualification</div>
   <hr>
   <div id="qualification_report"></div>
-
-
-	  <script>
-		document.getElementById('qualification_dropdown').innerHTML = httpGet('/qualifications/getAllQualifications');
-	</script>
+    <script>
+        document.getElementById('qualification_report').innerHTML = httpGet('/qualifications/getQualificationReport');
+    </script>
 
 
 }

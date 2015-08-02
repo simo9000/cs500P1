@@ -44,5 +44,5 @@ GET     /employee/getQualificationByEmployee/:eid_str       	controllers.Employe
 
 #Qualification Page
 GET     /qualifications/getAllQualifications              				controllers.QualificationsController.getAllQualifications()
-GET     /qualifications/getQualificationReport/:qualification       	controllers.QualificationsController.getQualificationReport(qualification: String)
+GET     /qualifications/getQualificationReport      	controllers.QualificationsController.getQualificationReport()
 

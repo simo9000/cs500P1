@@ -39,29 +39,23 @@ public class QualificationsController extends Controller {
 
 
 
-    public static Result getQualificationReport(String qualification) {
+    public static Result getQualificationReport() {
 
 
-        String sql = "select e.eid, name, q.qualificationname, datereceived, achievementname  from tblhasqualification q " 
-    				+ "left join tblEmployee e on  q.eid = e.eid  "
-    				+ "left join  tblachievementsrequiresforqualification a on a.qualificationname=q.qualificationname ";
-
-    	if (!qualification.equals("all")){
-    		sql += " where q.qualificationname ="+ "'"+ qualification+ "'";
-    		}			
+        String sql = "select qualificationName, count(e.eid) as number_of_employees  " +
+        			 "from tblhasqualification q, tblEmployee e                  " +                                    
+        			 "where q.eid=e.eid group by qualificationname  ";           
+		
 
         Connection conn = DB.getConnection();
         String result = "<table border=1 width='950px'>";
-        result += "<tr><th>EID</th><th>Name</th><th>Qualification</th><th>Date Received</th><th>Achievement Completed</th></tr>";
+        result += "<tr><th>Qualification</th><th>Number of Employees</th></tr>";
         try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
-                result += "<tr><td>"+ rs.getString("eid")       + "</td><td>"
-                                    + rs.getString("Name")      + "</td><td>"
-                                    + rs.getString("qualificationname") + "</td><td>"
-                                    + rs.getString("datereceived") + "</td><td>"
-                                    + rs.getString("achievementname")  + "</td>"
+                result += "<tr><td>"+ rs.getString("qualificationname")       + "</td><td>"
+                                    + rs.getString("number_of_employees")      + "</td>"
                                     + "</tr>";
                     }
             rs.close();
